@@ -9,7 +9,7 @@ server = require('http').Server(require('express')())
 io = require('socket.io')(server)
 core = new (require('./core'))(redis)
 chat = new (require('./chat'))(logger, io, core, amqp)
-notifications = new (require('./notifications'))(logger)
+notifier = new (require('./notifier'))(logger)
 connectionAuthenticator = new (require('./connectionAuthenticator'))(logger, io, redis)
 
 redis.on 'ready', () ->
@@ -17,5 +17,5 @@ redis.on 'ready', () ->
     logger.info 'server started'
     connectionAuthenticator.authenticateIncomingConnections (connection) ->
       #chat.listen()
-      notifications.notify(connection)
+      notifier.notify(connection)
     server.listen(config.get('express.port'))

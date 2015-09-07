@@ -1,4 +1,4 @@
-class Notifications
+class Notifier
   constructor: (@logger, @amqp) ->
 
   notify: (connection) ->
@@ -6,4 +6,4 @@ class Notifications
       queue.subscribe (queuedMessage) ->
         connection.emit 'notification', JSON.parse(queuedMessage.data.toString('utf8'))
 
-module.exports = Notifications
+module.exports = Notifier
