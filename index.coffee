@@ -5,11 +5,17 @@ logger = new (require('./logger'))()
 redis = require('redis').createClient(config.get('redis.port'),
                                       config.get('redis.host'))
 amqp = require('amqp').createConnection(config.get('amqp'))
+server = require('http').Server(require('express')())
+io = require('socket.io')(server)
+core = new (require('./core'))(redis)
+chat = new (require('./chat'))(core)
 
 redis.on 'ready', () ->
   logger.info 'redis rdy'
   amqp.on 'ready', () ->
     logger.info 'amqp rdy'
+    chat.listen(io)
+    server.listen(config.get('express.port'))
 
 ###
 var server = require('http').Server(require('express')());
@@ -63,35 +69,5 @@ redis.on('ready', function() {
     server.listen(8080);
   });
 });
-
-###
-###
-
-{
-  "name": "pvpc-chat",
-  "version": "0.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pleniec/pvpc-chat.git"
-  },
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/pleniec/pvpc-chat/issues"
-  },
-  "dependencies": {
-    "socket.io": "~1.3.6",
-    "express": "~4.13.1",
-    "nodemon": "~1.3.7",
-    "amqp": "~0.2.4",
-    "redis": "~0.12.1",
-    "restler": "~3.3.0"
-  }
-}
-
 
 ###
