@@ -7,8 +7,7 @@ redis = require('redis').createClient(config.get('redis.port'),
 amqp = require('amqp').createConnection(config.get('amqp'))
 server = require('http').Server(require('express')())
 io = require('socket.io')(server)
-core = new (require('./core'))(redis)
-chat = new (require('./chat'))(logger, io, core, amqp)
+chat = new (require('./chat'))(logger, io, amqp)
 notifier = new (require('./notifier'))(logger)
 connectionAuthenticator = new (require('./connectionAuthenticator'))(logger, io, redis)
 

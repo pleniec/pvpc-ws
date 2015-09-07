@@ -1,9 +1,5 @@
 class Chat
-  constructor: (@logger, @io, @core, @amqp) ->
-
-  listen: () ->
-    @io.on 'connection', (socket) =>
-      @logger.info 'NEW CONNECTION!'
+  constructor: () ->
 
 module.exports = Chat
 
