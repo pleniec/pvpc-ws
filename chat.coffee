@@ -1,6 +1,5 @@
 class Chat
-  constructor: (core) ->
-    @core = core
+  constructor: (@core) ->
 
   listen: (io) ->
     io.on 'connection', (socket) ->

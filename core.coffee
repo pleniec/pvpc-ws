@@ -1,6 +1,5 @@
 class Core
-  constructor: (redis) ->
-    @redis = redis
+  constructor: (@redis) ->
 
   authenticate: (accessToken, callback) ->
     @redis.get 'access_token:' + accessToken, (error, userId) ->
