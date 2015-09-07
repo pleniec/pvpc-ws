@@ -1,0 +1,11 @@
+{
+  "amqp": {
+    "host": "localhost",
+    "login": "rabbitmq",
+    "password": "taS1SLRpBZvjm4IR"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379
+  }
+}
