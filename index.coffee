@@ -1,13 +1,15 @@
+process.env.NODE_ENV ||= 'development'
+
 config = require 'config'
+logger = new (require('./logger'))()
 redis = require('redis').createClient(config.get('redis.port'),
                                       config.get('redis.host'))
 amqp = require('amqp').createConnection(config.get('amqp'))
 
 redis.on 'ready', () ->
-  console.log 'redis rdy'
+  logger.info 'redis rdy'
   amqp.on 'ready', () ->
-    console.log 'amqp rdy'
-
+    logger.info 'amqp rdy'
 
 ###
 var server = require('http').Server(require('express')());
