@@ -1,7 +1,9 @@
 class Notifications
-  constructor: (@logger, @io) ->
+  constructor: (@logger, @amqp) ->
 
-  notify: () ->
-    console.log 'hehe'
+  notify: (connection) ->
+    @amqp.queue "notifications:user:#{connection.userId}", (queue) =>
+      queue.subscribe (queuedMessage) ->
+        connection.emit 'notification', JSON.parse(queuedMessage.data.toString('utf8'))
 
 module.exports = Notifications
