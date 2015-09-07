@@ -1,16 +1,9 @@
 class Chat
-  constructor: (@core) ->
+  constructor: (@logger, @io, @core, @amqp) ->
 
-  listen: (io) ->
-    io.on 'connection', (socket) ->
-      @core.authenticate socket.handshake.query.accessToken, (userId) ->
-        if !userId
-          socket.emit 'errorMessage',
-            text: 'invalid access token'
-          socket.disconnect()
-          return
-        socket.on 'message', (message) ->
-          console.log(message)
+  listen: () ->
+    @io.on 'connection', (socket) =>
+      @logger.info 'NEW CONNECTION!'
 
 module.exports = Chat
 

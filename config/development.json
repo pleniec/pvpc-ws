@@ -2,7 +2,7 @@
   "amqp": {
     "host": "localhost",
     "login": "rabbitmq",
-    "password": "taS1SLRpBZvjm4IR"
+    "password": "0gY0Cdj9lVtGO5G5"
   },
   "redis": {
     "host": "localhost",

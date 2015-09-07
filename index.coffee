@@ -8,13 +8,13 @@ amqp = require('amqp').createConnection(config.get('amqp'))
 server = require('http').Server(require('express')())
 io = require('socket.io')(server)
 core = new (require('./core'))(redis)
-chat = new (require('./chat'))(core)
+chat = new (require('./chat'))(logger, io, core, amqp)
 
 redis.on 'ready', () ->
   logger.info 'redis rdy'
   amqp.on 'ready', () ->
     logger.info 'amqp rdy'
-    chat.listen(io)
+    chat.listen()
     server.listen(config.get('express.port'))
 
 ###
