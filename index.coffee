@@ -9,12 +9,14 @@ server = require('http').Server(require('express')())
 io = require('socket.io')(server)
 core = new (require('./core'))(redis)
 chat = new (require('./chat'))(logger, io, core, amqp)
+notifications = new (require('./notifications'))(logger, io)
 
 redis.on 'ready', () ->
   logger.info 'redis rdy'
   amqp.on 'ready', () ->
     logger.info 'amqp rdy'
-    chat.listen()
+    #chat.listen()
+    notifications.notify()
     server.listen(config.get('express.port'))
 
 ###
