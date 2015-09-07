@@ -1,5 +1,9 @@
 class Chat
-  constructor: () ->
+  constructor: (@services) ->
+
+  onConnect: (connection) ->
+
+  onDisconnect: (connection) ->
 
 module.exports = Chat
 
