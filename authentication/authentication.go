@@ -11,9 +11,9 @@ var (
 
 func init() {
 	rc = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr:     "localhost:6379",
 		Password: "",
-		DB: 0,
+		DB:       0,
 	})
 
 	_, err := rc.Ping().Result()
