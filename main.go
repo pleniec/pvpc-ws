@@ -1,14 +1,41 @@
 package main
 
 import (
-	_ "./authentication"
-	_ "./notifications"
-	"fmt"
-	"github.com/gorilla/websocket"
-	_ "log"
 	"net/http"
-	_ "time"
-	"./provider"
+	"log"
+	"github.com/gorilla/websocket"
+	"./ws"
+)
+
+func main() {
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+
+	router := ws.NewRouter()
+	go router.Run()
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		go ws.NewClient(101, conn, router).Run()
+	})
+	http.ListenAndServe(":8080", nil)
+}
+
+/*
+import (
+	"net/http"
+	"log"
+	"github.com/gorilla/websocket"
+	"./client"
 )
 
 var (
@@ -22,8 +49,62 @@ var (
 )
 
 func main() {
-	fmt.Println(provider.RedisClient())
-	fmt.Println(provider.AMQPConnection())
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		go client.New(101, conn).Run()
+	})
+	http.ListenAndServe(":8080", nil)
+}
+*/
+/*
+import (
+	"./authentication"
+	_ "./notifications"
+	_ "fmt"
+	"github.com/gorilla/websocket"
+	_ "log"
+	"net/http"
+	_ "time"
+	_ "./provider"
+	"./router"
+)
+
+var (
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+)
+
+func main() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		id, err := authentication.AuthenticateRequest(r.FormValue("AccessToken"))
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		if id == -1 {
+			http.Error(w, "", 401)
+			return
+		}
+
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		conn.ReadMessage()
+		router.AddClient <- router.Client{id, conn}
+	})
 
 	/*
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -102,4 +183,4 @@ func main() {
 
 	//fmt.Println("listening on 8080")
 	//http.ListenAndServe(":8080", nil)
-}
+//}
