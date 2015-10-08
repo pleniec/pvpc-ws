@@ -21,13 +21,8 @@ func New(id int, connection *websocket.Conn) *Client {
 }
 
 func (c *Client) Run() {
-	//go c.readMessages()
-
 	for {
 		select {
-		//case m := <- c.InputChan:
-		//	fmt.Println(m)
-		//	break
 		case e := <-c.OutputChan:
 			bytes, err := json.Marshal(e)
 			if err != nil {
