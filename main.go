@@ -1,11 +1,13 @@
 package main
 
 import (
-	"log"
-	"fmt"
+	_ "log"
+	_ "fmt"
 	"github.com/gorilla/websocket"
 	"net/http"
-	_ "gopkg.in/redis.v3"
+	_ "time"
+	_ "./authentication"
+	_ "./notifier"
 	"time"
 )
 
@@ -20,13 +22,54 @@ var (
 )
 
 func main() {
+	time.Sleep(5 * time.Second)
+
+	/*
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
+		id, err := authentication.AuthenticateRequest(r.FormValue("AccessToken"))
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 500)
+			return
 		}
 
+		if id == -1 {
+			http.Error(w, "", 401)
+			return
+		}
 
+		conn, err := upgrader.Upgrade(w, r, nil)
+
+		for {
+			_, b, err := conn.ReadMessage()
+			if err != nil {
+				http.Error(w, err.Error(), 500)
+				return
+			}
+
+			err = conn.WriteMessage(websocket.TextMessage, b)
+			if err != nil {
+				http.Error(w, err.Error(), 500)
+				return
+			}
+		}
+
+		/*
+		if err != nil {
+			http.Error(w, "", 401)
+		} else {
+			conn, err := upgrader.Upgrade(w, r, nil)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for {
+				_, b, _ := conn.ReadMessage()
+				fmt.Println(string(b))
+			}
+		}
+		*/
+
+		/*
 		conn.SetPongHandler(func (ad string) error {
 			conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 			fmt.Println("PONG")
@@ -53,6 +96,9 @@ func main() {
 				conn.WriteMessage(websocket.PingMessage, []byte{})
 			}
 		}()
-	})
-	http.ListenAndServe(":8080", nil)
+		*/
+	//})
+
+	//fmt.Println("listening on 8080")
+	//http.ListenAndServe(":8080", nil)
 }
