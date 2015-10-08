@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"log"
+	"../provider"
 )
 
 var (
-	amqpConnection *amqp.Connection
 	Channel        chan notification
 )
 
@@ -21,13 +21,7 @@ type notification struct {
 func init() {
 	Channel = make(chan notification)
 
-	var err error
-	amqpConnection, err = amqp.Dial("amqp://rabbitmq:rabbitmq@localhost:5672/")
-	if err != nil {
-		log.Fatal("can't connect to rabbitmq (", err, ")")
-	}
-
-	ch, err := amqpConnection.Channel()
+	ch, err := provider.AMQPConnection().Channel()
 	if err != nil {
 		log.Fatal("can't create rabbitmq channel (", err, ")")
 	}

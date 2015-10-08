@@ -2,12 +2,13 @@ package main
 
 import (
 	_ "./authentication"
-	"./notifications"
+	_ "./notifications"
 	"fmt"
 	"github.com/gorilla/websocket"
 	_ "log"
 	"net/http"
 	_ "time"
+	"./provider"
 )
 
 var (
@@ -21,16 +22,8 @@ var (
 )
 
 func main() {
-	for {
-		n := <-notifications.Channel
-		fmt.Println(n)
-	}
-	/*
-		for {
-			n := <-notifier.NotificationsChan
-			fmt.Println(n)
-		}
-	*/
+	fmt.Println(provider.RedisClient())
+	fmt.Println(provider.AMQPConnection())
 
 	/*
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
