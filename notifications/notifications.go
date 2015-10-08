@@ -1,14 +1,14 @@
 package notifications
 
 import (
+	"../provider"
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"log"
-	"../provider"
 )
 
 var (
-	Channel        chan notification
+	Channel chan notification
 )
 
 type notification struct {

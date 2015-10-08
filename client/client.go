@@ -1,42 +1,41 @@
 package client
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
+	_ "encoding/json"
+	_ "fmt"
 	"github.com/gorilla/websocket"
-	"../router"
+	"log"
 )
 
 type Client struct {
-	ID int
+	ID         int
 	Connection *websocket.Conn
+	InputChan  chan *Message
+	OutputChan chan *Event
+	ErrorChan  chan *Message
 }
 
-func New(id int, conn *websocket.Conn) (*Client) {
-	return &Client{id, conn}
+func New(id int, connection *websocket.Conn) *Client {
+	return &Client{id, connection, make(chan *Message, 10), make(chan *Event, 10), make(chan *Message, 10)}
 }
 
 func (c *Client) Run() {
-	router.AddClient < c
+	//go c.readMessages()
 
-	go c.readMessages()
-
-	select {
-	}
-}
-
-func (c *Client) readMessages() {
 	for {
-		mt, b, err := c.Connection.ReadMessage()
-		if err != nil {
-			if err.(*websocket.CloseError) != nil {
-				log.Fatal("CLOSED")
-			} else {
+		select {
+		//case m := <- c.InputChan:
+		//	fmt.Println(m)
+		//	break
+		case e := <-c.OutputChan:
+			bytes, err := json.Marshal(e)
+			if err != nil {
 				log.Fatal(err)
 			}
-		}
 
-		fmt.Println(mt)
-		fmt.Println(string(b))
+			c.Connection.WriteMessage(websocket.TextMessage, bytes)
+			break
+		}
 	}
 }

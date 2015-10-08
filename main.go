@@ -1,10 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"log"
+	"./client"
+	"./router"
 	"github.com/gorilla/websocket"
-	"./ws"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -16,17 +17,17 @@ func main() {
 		},
 	}
 
-	router := ws.NewRouter()
-	go router.Run()
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		go ws.NewClient(101, conn, router).Run()
+		c := client.New(101, conn)
+		router.AddClientChan <- c
+		go c.Run()
 	})
+
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -149,38 +150,38 @@ func main() {
 					fmt.Println(string(b))
 				}
 			}
-	*/
+*/
 
-	/*
-		conn.SetPongHandler(func (ad string) error {
-			conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-			fmt.Println("PONG")
-			return nil
-		})
+/*
+	conn.SetPongHandler(func (ad string) error {
 		conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+		fmt.Println("PONG")
+		return nil
+	})
+	conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 
-		go func() {
-			for {
-				_, b, err := conn.ReadMessage()
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				fmt.Println("CO KURWA?")
-				fmt.Println(string(b))
+	go func() {
+		for {
+			_, b, err := conn.ReadMessage()
+			if err != nil {
+				log.Fatal(err)
 			}
-		}()
 
-		go func() {
-			for {
-				time.Sleep(time.Second)
-				conn.SetWriteDeadline(time.Now().Add(1 * time.Second))
-				conn.WriteMessage(websocket.PingMessage, []byte{})
-			}
-		}()
-	*/
-	//})
+			fmt.Println("CO KURWA?")
+			fmt.Println(string(b))
+		}
+	}()
 
-	//fmt.Println("listening on 8080")
-	//http.ListenAndServe(":8080", nil)
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			conn.SetWriteDeadline(time.Now().Add(1 * time.Second))
+			conn.WriteMessage(websocket.PingMessage, []byte{})
+		}
+	}()
+*/
+//})
+
+//fmt.Println("listening on 8080")
+//http.ListenAndServe(":8080", nil)
 //}
