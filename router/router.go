@@ -8,12 +8,12 @@ import (
 )
 
 var (
-	clients       map[int]*client.Client
+	clients       map[int64]*client.Client
 	AddClientChan chan *client.Client
 )
 
 func init() {
-	clients = make(map[int]*client.Client)
+	clients = make(map[int64]*client.Client)
 	AddClientChan = make(chan *client.Client)
 
 	go func() {

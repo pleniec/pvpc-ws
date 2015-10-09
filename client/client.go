@@ -9,14 +9,14 @@ import (
 )
 
 type Client struct {
-	ID         int
+	ID         int64
 	Connection *websocket.Conn
 	InputChan  chan *Message
 	OutputChan chan *Event
 	ErrorChan  chan *Message
 }
 
-func New(id int, connection *websocket.Conn) *Client {
+func New(id int64, connection *websocket.Conn) *Client {
 	return &Client{id, connection, make(chan *Message, 10), make(chan *Event, 10), make(chan *Message, 10)}
 }
 

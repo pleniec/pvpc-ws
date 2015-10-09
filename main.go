@@ -1,11 +1,13 @@
 package main
 
 import (
-	"./client"
-	"./router"
-	"github.com/gorilla/websocket"
+	"fmt"
 	"log"
 	"net/http"
+	"github.com/gorilla/websocket"
+	"./client"
+	"./router"
+	"./authentication"
 )
 
 func main() {
@@ -18,15 +20,27 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		id, err := authentication.AuthenticateRequest(r.FormValue("AccessToken"))
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		if id == -1 {
+			http.Error(w, "", 401)
+			return
+		}
+
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		c := client.New(101, conn)
+		c := client.New(id, conn)
 		router.AddClientChan <- c
 		go c.Run()
 	})
 
+	fmt.Println("listening on 8080")
 	http.ListenAndServe(":8080", nil)
 }
