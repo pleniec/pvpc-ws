@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"github.com/gorilla/websocket"
+	"./authentication"
 	"./client"
 	"./router"
-	"./authentication"
+	"fmt"
+	"github.com/gorilla/websocket"
+	"log"
+	"net/http"
 )
 
 func main() {

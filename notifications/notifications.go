@@ -12,8 +12,8 @@ var (
 )
 
 type notification struct {
-	ID         int64                    `json:"id"`
-	UserID     int64                    `json:"user_id"`
+	ID         int64                  `json:"id"`
+	UserID     int64                  `json:"user_id"`
 	Type       string                 `json:"type"`
 	Properties map[string]interface{} `json:"properties"`
 }
